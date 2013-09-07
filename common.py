@@ -7,7 +7,7 @@ from cv import *
 
 CROP_WIDTH = 32
 CROP_HEIGHT = 32
-DEBUG = False
+DEBUG = True
 
 def cropImage(img, point):
     x = point[0] - (CROP_WIDTH / 2)
@@ -18,6 +18,9 @@ def cropImage(img, point):
       print("[" + str(y) + ":" + str(y+CROP_HEIGHT) + "," + str(x) + ":" + str(x+CROP_WIDTH) + "]")
     result = img[y:(y+CROP_HEIGHT), x:(x+CROP_WIDTH)]
     return result
+
+def findBounds(crop):
+  return (20,20,20), (20,20,20)
 
 
 # def cv2array(im):

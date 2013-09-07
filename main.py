@@ -9,21 +9,29 @@ import numpy as np
 #http://docs.opencv.org/modules/imgproc/doc/miscellaneous_transformations.html#cv2.floodFill
 
 seedPoints = []
-colors = [[255,0,0], [0,255,0], [0,0,255], [255, 255, 100]]
+colors = [[255,0,0], [0,255,0], [0,0,255], [255, 255, 100], [255, 100, 255], [100, 255, 255], [0, 255, 100]]
 
-def lateFlood(img, seed, color):
-  crop = common.cropImage(img, seed)
-  lowBounds, highBounds = common.findBounds(crop, common.findZscore())
-  print("lowBounds = " + str(lowBounds))
-  print("highBounds = " + str(highBounds))
-  #cv.FloodFill(img, seed, color, cv.RGB(*lowBounds), cv.RGB(*highBounds), 4 + cv.CV_FLOODFILL_FIXED_RANGE)
-  cv2.floodFill(img, seed, color, cv2.RGB(*lowBounds), cv2.RGB(*highBounds), 4)
-  return img
+# def lateFlood(img, seed, color):
+#   crop = common.cropImage(img, seed)
+#   lowBounds, highBounds = common.findBounds(crop, common.findZscore())
+#   print("lowBounds = " + str(lowBounds))
+#   print("highBounds = " + str(highBounds))
+#   #cv.FloodFill(img, seed, color, cv.RGB(*lowBounds), cv.RGB(*highBounds), 4 + cv.CV_FLOODFILL_FIXED_RANGE)
+#   cv2.floodFill(img, seed, color, cv2.RGB(*lowBounds), cv2.RGB(*highBounds), 4)
+#   return img
 
-# def flood(sourceImage, seed, color):
-#   crop = common.cropImage(sourceImage, seed)
-#   cv2.imshow('crop' + str(color), crop)
-#   return sourceImage
+def flood(srcImg, seed, color):
+  h, w = srcImg.shape[:2]
+  mask = np.zeros((h+2, w+2), np.uint8)
+  crop = common.cropImage(srcImg, seed)
+  lowBounds, highBounds = common.findBounds(crop)
+  connectivity = 8
+  flags = connectivity
+  flags |= cv2.FLOODFILL_FIXED_RANGE
+
+  cv2.floodFill(srcImg, mask, seed, color, lowBounds, highBounds, flags)
+  # cv2.imshow("mask", mask)
+  return srcImg
 
 def preprocessImage(img):
     #cv2.imshow('floodfill', img)
@@ -37,7 +45,10 @@ def preprocessImage(img):
     return img
 
 def captureMousePosition(event, x, y, flags, nemIdeia):
-  if flags & event == cv2.EVENT_LBUTTONDOWN:
+  if flags == cv2.EVENT_FLAG_SHIFTKEY and event == cv2.EVENT_LBUTTONDOWN:
+    print(x, y)
+    return
+  if event == cv2.EVENT_LBUTTONDOWN:
       if(len(seedPoints) < len(colors)):
             seedPoints.append((x,y))
             print(str((x, y)))
@@ -45,7 +56,8 @@ def captureMousePosition(event, x, y, flags, nemIdeia):
             cv2.circle(imgComPontos, (x,y), 10, color, -1)
             cv2.imshow("floodfill", imgComPontos)
 
-img = cv2.imread("imagens/prato1.jpg")
+
+img = cv2.imread("imagens/prato4.jpg")
 img = cv2.resize(img, (800,600))
 
 img = preprocessImage(img)
@@ -55,10 +67,10 @@ cv2.imshow("floodfill", img)
 cv2.setMouseCallback('floodfill', captureMousePosition)
 cv2.waitKey(0)
 
-# for seed, color in zip(seedPoints, colors):
-#   print("Preenchendo o ponto "+ str(seed) + " com a cor " + str(color))
-#   # img = lateFlood(img, seed, color)
-#   img = flood(img, seed, color)
+for seed, color in zip(seedPoints, colors):
+  print("Preenchendo o ponto "+ str(seed) + " com a cor " + str(color))
+  # img = lateFlood(img, seed, color)
+  img = flood(img, seed, color)
 
 cv2.imshow("floodfill", img)
 cv2.waitKey(0)
