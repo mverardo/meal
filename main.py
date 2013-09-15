@@ -36,11 +36,11 @@ def preprocessImage(img):
     #cv2.imshow('floodfill', img)
     #cv2.waitKey()
     img = cv2.medianBlur(img, 13)
-    cv2.imshow('floodfill', img)
-    cv2.waitKey()
+    # cv2.imshow('floodfill', img)
+    # cv2.waitKey()
     img = cv2.dilate(img, np.ones((9,9),'int'))
-    cv2.imshow('floodfill', img)
-    cv2.waitKey()
+    # cv2.imshow('floodfill', img)
+    # cv2.waitKey()
     return img
 
 def captureMousePosition(event, x, y, flags, nemIdeia):
