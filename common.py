@@ -5,8 +5,8 @@ import numpy as np
 import math
 from cv import *
 
-CROP_WIDTH = 32
-CROP_HEIGHT = 32
+CROP_WIDTH = 64
+CROP_HEIGHT = 64
 DEBUG = True
 
 def cropImage(img, point):
@@ -19,8 +19,37 @@ def cropImage(img, point):
     result = img[y:(y+CROP_HEIGHT), x:(x+CROP_WIDTH)]
     return result
 
+def splitChannels(array):
+    b = array[:,:,0]
+    g = array[:,:,1]
+    r = array[:,:,2]
+    return [b, g, r]
+
+# def findBounds(crop, zscore):
+#     ar = cv2array(crop)
+#     b,g,r = split(ar)
+#     bbounds = findColorBounds(b, zscore)
+#     gbounds = findColorBounds(g, zscore)
+#     rbounds = findColorBounds(r, zscore)
+
+#     return zip(bbounds, gbounds, rbounds)
+
+# def findColorBounds(chanel, zscore):
+#   #hist = np.histogram(chanel, 255, (0, 255))[0]
+#   #histMaxIndex = hist.argmax()
+#   #mean = np.mean(chanel)
+#   sigma = np.std(chanel)
+#   newSigma = zscore * sigma
+#   return newSigma, newSigma
+#   # smoothedHist = np.array(map(lambda (x): x-5 if (x-5) > 0 else 0, hist))
+#   #smoothedHist = hist
+
 def findBounds(crop):
-  return (20,20,20), (20,20,20)
+  channels = splitChannels(crop)
+  ranges = [[int((channel.max() - channel.min()) / 2), int((channel.max() - channel.min()) / 2)] for channel in channels]
+  bounds = zip(*ranges)
+  return bounds[0], bounds[1]
+
 
 
 # def cv2array(im):
@@ -87,11 +116,7 @@ def findBounds(crop):
 #     rowWhites.append(whites)
 #   return np.array(whites).max()
 
-# def split(array):
-#     b = array[:,:,0]
-#     g = array[:,:,1]
-#     r = array[:,:,2]
-#     return b, g, r
+
 
 # def findColorBounds(chanel, zscore):
 #   #hist = np.histogram(chanel, 255, (0, 255))[0]
