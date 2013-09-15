@@ -1,4 +1,5 @@
-import cv
+#coding: utf-8
+
 import cv2
 import common
 import numpy as np
@@ -11,6 +12,8 @@ import numpy as np
 seedPoints = []
 colors = [[255,0,0], [0,255,0], [0,0,255], [255, 255, 100], [255, 100, 255], [100, 255, 255], [0, 255, 100]]
 
+masks = []
+
 # def lateFlood(img, seed, color):
 #   crop = common.cropImage(img, seed)
 #   lowBounds, highBounds = common.findBounds(crop, common.findZscore())
@@ -20,6 +23,18 @@ colors = [[255,0,0], [0,255,0], [0,0,255], [255, 255, 100], [255, 100, 255], [10
 #   cv2.floodFill(img, seed, color, cv2.RGB(*lowBounds), cv2.RGB(*highBounds), 4)
 #   return img
 
+def preprocessImage(img):
+    #cv2.imshow('floodfill', img)
+    #cv2.waitKey()
+    img = cv2.medianBlur(img, 13)
+    # img = cv2.GaussianBlur(img, (13,13),0)
+    # cv2.imshow('floodfill', img)
+    # cv2.waitKey()
+    img = cv2.dilate(img, np.ones((9,9),'int'))
+    # cv2.imshow('floodfill', img)
+    # cv2.waitKey()
+    return img
+
 def flood(srcImg, seed, color):
   h, w = srcImg.shape[:2]
   mask = np.zeros((h+2, w+2), np.uint8)
@@ -28,20 +43,12 @@ def flood(srcImg, seed, color):
   connectivity = 8
   flags = connectivity
   flags |= cv2.FLOODFILL_FIXED_RANGE
-  cv2.floodFill(srcImg, mask, seed, color, lowBounds, highBounds, flags)
+  flags |= cv2.FLOODFILL_MASK_ONLY
+  cv2.floodFill(srcImg, mask=mask, seedPoint=seed, newVal=color, loDiff=lowBounds, upDiff=highBounds, flags=flags)
   # cv2.imshow("mask", mask)
-  return srcImg
+  return srcImg, mask
 
-def preprocessImage(img):
-    #cv2.imshow('floodfill', img)
-    #cv2.waitKey()
-    img = cv2.medianBlur(img, 13)
-    # cv2.imshow('floodfill', img)
-    # cv2.waitKey()
-    img = cv2.dilate(img, np.ones((9,9),'int'))
-    # cv2.imshow('floodfill', img)
-    # cv2.waitKey()
-    return img
+
 
 def captureMousePosition(event, x, y, flags, nemIdeia):
   if flags == cv2.EVENT_FLAG_SHIFTKEY and event == cv2.EVENT_LBUTTONDOWN:
@@ -69,7 +76,15 @@ cv2.waitKey(0)
 for seed, color in zip(seedPoints, colors):
   print("Preenchendo o ponto "+ str(seed) + " com a cor " + str(color))
   # img = lateFlood(img, seed, color)
-  img = flood(img, seed, color)
+  img, mask = flood(img, seed, color)
+  masks.append(mask)
+
 
 cv2.imshow("floodfill", img)
 cv2.waitKey(0)
+
+for i in range(len(masks)):
+  #Pra mostrar a foto, tenho que multiplicar por 255, pq a mascara fica com 1 nos lugares selecionados. Como a imagem não é binária, não dá pra ver.
+  cv2.imshow(str(i), masks[i] * 255)
+
+cv2.waitKey()

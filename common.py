@@ -45,8 +45,9 @@ def splitChannels(array):
 #   #smoothedHist = hist
 
 def findBounds(crop):
+  c = 1.8
   channels = splitChannels(crop)
-  ranges = [[int((channel.max() - channel.min()) / 2), int((channel.max() - channel.min()) / 2)] for channel in channels]
+  ranges = [[int((channel.max() - channel.min())/c), int((channel.max() - channel.min())/c)] for channel in channels]
   bounds = zip(*ranges)
   return bounds[0], bounds[1]
 
