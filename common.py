@@ -5,8 +5,8 @@ import numpy as np
 import math
 from cv import *
 
-CROP_WIDTH = 64
-CROP_HEIGHT = 64
+CROP_WIDTH = 128
+CROP_HEIGHT = 128
 DEBUG = True
 
 def cropImage(img, point):
@@ -46,7 +46,7 @@ def splitChannels(array):
 
 def findBounds(crop):
   channels = splitChannels(crop)
-  ranges = [[int((channel.max() - channel.min()) / 2), int((channel.max() - channel.min()) / 2)] for channel in channels]
+  ranges = [[int((channel.max() - channel.min())), int((channel.max() - channel.min()))] for channel in channels]
   bounds = zip(*ranges)
   return bounds[0], bounds[1]
 
