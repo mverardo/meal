@@ -26,13 +26,21 @@ masks = []
 def preprocessImage(img):
     #cv2.imshow('floodfill', img)
     #cv2.waitKey()
-    img = cv2.medianBlur(img, 13)
-    # img = cv2.GaussianBlur(img, (13,13),0)
+    img = cv2.medianBlur(img, 33)
+    cv2.imshow('floodfill', img)
+    cv2.waitKey()
+
+    img = cv2.dilate(img, np.ones((51,51),'int'))
+    cv2.imshow('floodfill', img)
+    cv2.waitKey()
+    img = cv2.erode(img, np.ones((51,51),'int'))
+    cv2.imshow('floodfill', img)
+    cv2.waitKey()
+
+    img = cv2.medianBlur(img, 33)
     # cv2.imshow('floodfill', img)
     # cv2.waitKey()
-    img = cv2.dilate(img, np.ones((9,9),'int'))
-    # cv2.imshow('floodfill', img)
-    # cv2.waitKey()
+
     return img
 
 def flood(srcImg, seed, color):
@@ -47,8 +55,6 @@ def flood(srcImg, seed, color):
   cv2.floodFill(srcImg, mask=mask, seedPoint=seed, newVal=color, loDiff=lowBounds, upDiff=highBounds, flags=flags)
   # cv2.imshow("mask", mask)
   return srcImg, mask
-
-
 
 def captureMousePosition(event, x, y, flags, nemIdeia):
   if flags == cv2.EVENT_FLAG_SHIFTKEY and event == cv2.EVENT_LBUTTONDOWN:

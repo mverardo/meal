@@ -5,8 +5,8 @@ import numpy as np
 import math
 from cv import *
 
-CROP_WIDTH = 64
-CROP_HEIGHT = 64
+CROP_WIDTH = 128
+CROP_HEIGHT = 128
 DEBUG = True
 
 def cropImage(img, point):
@@ -45,7 +45,7 @@ def splitChannels(array):
 #   #smoothedHist = hist
 
 def findBounds(crop):
-  c = 1.8
+  c = 1
   channels = splitChannels(crop)
   ranges = [[int((channel.max() - channel.min())/c), int((channel.max() - channel.min())/c)] for channel in channels]
   bounds = zip(*ranges)
