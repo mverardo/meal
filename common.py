@@ -5,8 +5,8 @@ import numpy as np
 import math
 from cv import *
 
-CROP_WIDTH = 128
-CROP_HEIGHT = 128
+CROP_WIDTH = 64
+CROP_HEIGHT = 64
 DEBUG = True
 
 def cropImage(img, point):
