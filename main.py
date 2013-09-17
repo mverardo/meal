@@ -68,9 +68,20 @@ def captureMousePosition(event, x, y, flags, nemIdeia):
             cv2.circle(imgComPontos, (x,y), 10, color, -1)
             cv2.imshow("floodfill", imgComPontos)
 
+def segmentImage(img, mask):
+  h, w = img.shape[:2]
+  result = img.copy()
+  for i in range(h):
+    for j in range(w):
+      if mask[i][j] == 0:
+        result[i][j] = 0
+  return result
+
+
 
 img = cv2.imread("imagens/prato4.jpg")
 img = cv2.resize(img, (800,600))
+imgOriginal = img.copy()
 
 img = preprocessImage(img)
 imgComPontos = img.copy()
@@ -85,12 +96,9 @@ for seed, color in zip(seedPoints, colors):
   img, mask = flood(img, seed, color)
   masks.append(mask)
 
-
-cv2.imshow("floodfill", img)
-cv2.waitKey(0)
-
 for i in range(len(masks)):
-  #Pra mostrar a foto, tenho que multiplicar por 255, pq a mascara fica com 1 nos lugares selecionados. Como a imagem não é binária, não dá pra ver.
-  cv2.imshow(str(i), masks[i] * 255)
+  #Pra mostrar a foto, tenho que multiplicar por 255, pq a mascara fica com 1 nos lugares selecionados. Como a imagem não é binária, não dá pra ver.  
+  # cv2.imshow(str(i), masks[i] * 255)
+  cv2.imshow(str(i), segmentImage(imgOriginal, masks[i]))
 
 cv2.waitKey()
