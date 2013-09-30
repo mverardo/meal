@@ -88,6 +88,14 @@ imgComPontos = img.copy()
 
 cv2.imshow("floodfill", img)
 cv2.setMouseCallback('floodfill', captureMousePosition)
+#good seeds for prato4.jpg
+# (354, 467)
+# (308, 258)
+# (531, 289)
+# seedPoints.append((308, 258))
+# seedPoints.append((355, 474))
+# seedPoints.append((538, 294))
+
 cv2.waitKey(0)
 
 for seed, color in zip(seedPoints, colors):
